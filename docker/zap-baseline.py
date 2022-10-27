@@ -425,8 +425,9 @@ def main(argv):
                         continue
                     print(line)
     
-            except OSError:
+            except Exception as error:
                 logging.warning('Failed to start ZAP :(')
+                logging.warning(error)
                 sys.exit(3)
     
             # Read the status file to find out what code we should exit with
@@ -466,8 +467,9 @@ def main(argv):
     
                 start_zap(port, params)
     
-            except OSError:
+            except Exception as error:
                 logging.warning('Failed to start ZAP :(')
+                logging.warning(error)
                 sys.exit(3)
 
     else:
