@@ -9,18 +9,6 @@ RUN apt-get update && apt-get install -q -y --fix-missing \
 
 WORKDIR /zap
 
-# Setup Webswing
-ENV WEBSWING_VERSION 22.1.5
-ARG WEBSWING_URL=""
-RUN if [ -z "$WEBSWING_URL" ] ; \
-	then curl -s -L  "https://dev.webswing.org/files/public/webswing-examples-eval-${WEBSWING_VERSION}-distribution.zip" > webswing.zip; \
-	else curl -s -L  "$WEBSWING_URL-${WEBSWING_VERSION}-distribution.zip" > webswing.zip; fi && \
-	unzip webswing.zip && \
-	rm webswing.zip && \
-	mv webswing-* webswing && \
-	# Remove Webswing bundled examples
-	rm -Rf webswing/apps/
-
 FROM debian:unstable-slim
 LABEL maintainer="psiinon@gmail.com"
 
@@ -79,9 +67,6 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 COPY zap* CHANGELOG.md /zap/
-COPY --from=builder /zap/webswing /zap/webswing
-COPY webswing.config /zap/webswing/
-COPY webswing.properties /zap/webswing/
 COPY policies /home/zap/.ZAP_D/policies/
 COPY policies /root/.ZAP_D/policies/
 COPY scripts /home/zap/.ZAP_D/scripts/
@@ -93,8 +78,6 @@ RUN echo "zap2docker-weekly" > /zap/container
 USER root
 
 RUN chown zap:zap /zap/* CHANGELOG.md && \
-	chown zap:zap /zap/webswing/webswing.config && \
-	chown zap:zap /zap/webswing/webswing.properties && \
 	chown zap:zap -R /home/zap/.ZAP_D/ && \
 	chown zap:zap /home/zap/.xinitrc && \
 	chmod a+x /home/zap/.xinitrc
